@@ -1,32 +1,52 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 
-type FAQItemProps = {
+interface FAQItemProps {
   question: string;
   answer: React.ReactNode;
-};
+  isActive: boolean;
+  onClick: () => void;
+  delay: number;
+  inView: boolean;
+}
 
-const FAQItem = ({ question, answer }: FAQItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const FAQItem = ({ question, answer, isActive, onClick, delay, inView }: FAQItemProps) => {
   return (
-    <div className="border-b border-gray-700">
+    <div 
+      className="border-b border-gray-700 fade-in-up"
+      style={{ 
+        animationDelay: `${delay}s`,
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.5s ease, transform 0.5s ease',
+      }}
+    >
       <button
-        className="flex justify-between items-center w-full py-5 text-left"
-        onClick={() => setIsOpen(!isOpen)}
+        className="flex justify-between items-center w-full py-5 text-left group"
+        onClick={onClick}
       >
-        <span className="text-lg font-medium text-white" style={{ textShadow: isOpen ? '0 0 10px rgba(127, 86, 217, 0.4)' : 'none' }}>
+        <span 
+          className={`text-lg font-medium text-white transition-all duration-300 ${
+            isActive ? 'text-primary' : 'group-hover:text-primary/80'
+          }`} 
+          style={{ 
+            textShadow: isActive ? '0 0 10px rgba(127, 86, 217, 0.4)' : 'none',
+          }}
+        >
           {question}
         </span>
         <svg
-          className={`w-5 h-5 text-gray-400 transform transition-transform duration-200 ${
-            isOpen ? 'rotate-180 text-primary' : ''
+          className={`w-5 h-5 transition-all duration-300 ${
+            isActive ? 'text-primary rotate-180' : 'text-gray-400 group-hover:text-primary/80'
           }`}
+          style={{ 
+            filter: isActive ? 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' : 'none',
+          }}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          style={{ filter: isOpen ? 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' : 'none' }}
         >
           <path
             strokeLinecap="round"
@@ -38,16 +58,28 @@ const FAQItem = ({ question, answer }: FAQItemProps) => {
       </button>
       <div
         className={`overflow-hidden transition-all duration-300 ${
-          isOpen ? 'max-h-96 pb-5' : 'max-h-0'
+          isActive ? 'max-h-96' : 'max-h-0'
         }`}
       >
-        <div className="text-gray-400">{answer}</div>
+        <div 
+          className={`pb-5 text-gray-400 faq-answer ${
+            isActive ? 'open' : 'closed'
+          }`}
+        >
+          {answer}
+        </div>
       </div>
     </div>
   );
 };
 
 const FAQ = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
   const faqItems = [
     {
       question: "What type of photos should I upload for creating my AI model?",
@@ -103,21 +135,44 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-20" style={{ background: 'var(--violet-gradient)' }}>
+    <section id="faq" className="py-20 relative" style={{ background: 'var(--violet-gradient)' }}>
+      {/* Partículas decorativas */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <div
+            key={i}
+            className="floating-particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.3}s`,
+            }}
+          >
+            <svg width="8" height="8" viewBox="0 0 8 8">
+              <circle cx="4" cy="4" r="4" fill="rgba(127, 86, 217, 0.2)" />
+            </svg>
+          </div>
+        ))}
+      </div>
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 fade-in-up">
           <h2 className="section-title">Frequently Asked Questions</h2>
           <p className="section-subtitle">
             Everything you need to know about PhotoHero
           </p>
         </div>
 
-        <div className="card-with-glow p-8">
+        <div className="card-with-glow p-8" ref={ref}>
           {faqItems.map((item, index) => (
             <FAQItem
               key={index}
               question={item.question}
               answer={item.answer}
+              isActive={activeIndex === index}
+              onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+              delay={index * 0.1}
+              inView={inView}
             />
           ))}
         </div>

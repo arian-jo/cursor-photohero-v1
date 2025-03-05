@@ -1,30 +1,60 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-const Hero = () => {
+const FloatingParticle = ({ delay = 0 }) => {
+  const style = {
+    animationDelay: `${delay}s`,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+  };
+
   return (
-    <section className="pt-28 pb-16 px-4 md:pt-36 md:pb-24" style={{ background: 'var(--dark-gradient)' }}>
+    <div 
+      className="floating-particle" 
+      style={style}
+    >
+      <svg width="10" height="10" viewBox="0 0 10 10">
+        <circle cx="5" cy="5" r="5" fill="rgba(127, 86, 217, 0.3)" />
+      </svg>
+    </div>
+  );
+};
+
+const Hero = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <section className="relative pt-28 pb-16 px-4 md:pt-36 md:pb-24 overflow-hidden" style={{ background: 'var(--dark-gradient)' }}>
+      {/* Partículas decorativas */}
+      {mounted && Array.from({ length: 20 }).map((_, i) => (
+        <FloatingParticle key={i} delay={i * 0.2} />
+      ))}
+
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left fade-in-up" style={{ animationDelay: '0.2s' }}>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6" style={{ textShadow: '0 0 15px rgba(127, 86, 217, 0.4)' }}>
             Your Own AI Model
             <br />
             <span className="text-primary">for Just $9</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto md:mx-0">
+          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto md:mx-0 fade-in-up" style={{ animationDelay: '0.4s' }}>
             Upload 10 to 15 photos, and we&apos;ll train your custom PhotoHero AI model in about 10 minutes! Own your model and only pay for the images you generate!
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <Link href="/auth/signin" className="hero-button-primary">
+          <div className="space-y-4 fade-in-up" style={{ animationDelay: '0.6s' }}>
+            <Link href="/auth/signin" className="hero-button-primary hover-scale inline-block">
               Create My Model Now
             </Link>
             
-            <Link href="/auth/signin" className="hero-button-secondary">
+            <Link href="/auth/signin" className="hero-button-secondary hover-scale inline-block ml-4">
               <svg viewBox="0 0 24 24" className="w-5 h-5 mr-2">
                 <path
                   fill="#4285F4"
@@ -47,25 +77,25 @@ const Hero = () => {
             </Link>
           </div>
           
-          <p className="text-gray-400 mt-6">
+          <p className="text-gray-400 mt-6 fade-in-up" style={{ animationDelay: '0.8s' }}>
             <span className="font-medium">20+ creators</span> trust PhotoHero
           </p>
         </div>
         
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.3s' }}>
               <Image 
-                src="https://picsum.photos/seed/photo1/600/800" 
+                src="https://i.imgur.com/emFdCuj.jpeg"
                 alt="AI Generated Portrait" 
                 fill 
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.5s' }}>
               <Image 
-                src="https://picsum.photos/seed/photo2/600/800" 
+                src="https://i.imgur.com/WCK9kDd.jpeg" 
                 alt="AI Generated Portrait" 
                 fill 
                 className="object-cover"
@@ -74,18 +104,18 @@ const Hero = () => {
             </div>
           </div>
           <div className="space-y-4 pt-8">
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.4s' }}>
               <Image 
-                src="https://picsum.photos/seed/photo3/600/800" 
+                src="https://i.imgur.com/LXrLXna.jpeg" 
                 alt="AI Generated Portrait" 
                 fill 
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.6s' }}>
               <Image 
-                src="https://picsum.photos/seed/photo4/600/800" 
+                src="https://i.imgur.com/RZoz4wd.jpeg" 
                 alt="AI Generated Portrait" 
                 fill 
                 className="object-cover"
@@ -95,6 +125,9 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Indicador de scroll */}
+      <div className="scroll-indicator hidden md:block" />
     </section>
   );
 };

@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import './animations.css';
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -14,6 +15,9 @@
   --dark-gradient: linear-gradient(135deg, rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.98));
   --violet-gradient: linear-gradient(135deg, rgba(109, 40, 217, 0.2), rgba(17, 24, 39, 0.95));
   --card-gradient: linear-gradient(135deg, rgba(31, 41, 55, 1), rgba(55, 48, 163, 0.3));
+  --input-shadow: inset 0 2px 4px rgba(127, 86, 217, 0.2);
+  --hover-transform: scale(1.05) rotate(1deg);
+  --hover-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -27,26 +31,42 @@ body {
   font-family: 'Inter', 'Poppins', sans-serif;
 }
 
+/* Estilos base mejorados */
+input, textarea, select {
+  @apply bg-darkLight border border-gray-700 rounded-lg px-4 py-2;
+  box-shadow: var(--input-shadow);
+  transition: var(--hover-transition);
+}
+
+input:focus, textarea:focus, select:focus {
+  @apply border-primary outline-none;
+  box-shadow: var(--primary-glow);
+}
+
+button {
+  transition: var(--hover-transition);
+}
+
 @layer components {
   .hero-button-primary {
     @apply bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg;
     box-shadow: 0 0 15px rgba(127, 86, 217, 0.4);
-    transition: all 0.3s ease;
+    transition: var(--hover-transition);
   }
   
   .hero-button-primary:hover {
     box-shadow: 0 0 25px rgba(127, 86, 217, 0.6);
-    transform: translateY(-2px);
+    transform: var(--hover-transform);
   }
   
   .hero-button-secondary {
     @apply bg-white hover:bg-gray-100 text-dark font-semibold py-3 px-6 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2;
-    transition: all 0.3s ease;
+    transition: var(--hover-transition);
   }
   
   .hero-button-secondary:hover {
     box-shadow: 0 0 15px rgba(127, 86, 217, 0.3);
-    transform: translateY(-2px);
+    transform: var(--hover-transform);
   }
   
   .section-title {
@@ -62,11 +82,11 @@ body {
     @apply bg-darkLight rounded-xl shadow-lg overflow-hidden;
     background: var(--card-gradient);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), 0 0 15px rgba(127, 86, 217, 0.2);
-    transition: all 0.3s ease;
+    transition: var(--hover-transition);
   }
   
   .card-with-glow:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(127, 86, 217, 0.4);
-    transform: translateY(-3px);
+    transform: var(--hover-transform);
   }
 } 
