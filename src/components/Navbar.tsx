@@ -31,6 +31,12 @@ const Navbar = () => {
                 How It Works
               </Link>
               <Link
+                href="/#faq"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                FAQ
+              </Link>
+              <Link
                 href="/auth/signin"
                 className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium"
               >
@@ -100,6 +106,13 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               How It Works
+            </Link>
+            <Link
+              href="/#faq"
+              className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              FAQ
             </Link>
             <Link
               href="/auth/signin"
