@@ -55,27 +55,42 @@ const Hero = () => {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
             <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
-              {/* Replace with actual images later */}
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                AI Generated Photo 1
-              </div>
+              <Image 
+                src="https://picsum.photos/seed/photo1/600/800" 
+                alt="AI Generated Portrait" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             </div>
             <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                AI Generated Photo 2
-              </div>
+              <Image 
+                src="https://picsum.photos/seed/photo2/600/800" 
+                alt="AI Generated Portrait" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             </div>
           </div>
           <div className="space-y-4 pt-8">
             <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                AI Generated Photo 3
-              </div>
+              <Image 
+                src="https://picsum.photos/seed/photo3/600/800" 
+                alt="AI Generated Portrait" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             </div>
             <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                AI Generated Photo 4
-              </div>
+              <Image 
+                src="https://picsum.photos/seed/photo4/600/800" 
+                alt="AI Generated Portrait" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             </div>
           </div>
         </div>
