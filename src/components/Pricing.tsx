@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const Pricing = () => {
   return (
-    <section id="pricing" className="py-20 bg-dark">
+    <section id="pricing" className="py-20" style={{ background: 'var(--dark-gradient)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">Pricing</h2>
@@ -15,13 +15,13 @@ const Pricing = () => {
         </div>
 
         <div className="max-w-lg mx-auto">
-          <div className="bg-darkLight rounded-2xl shadow-xl overflow-hidden">
+          <div className="card-with-glow" style={{ boxShadow: '0 0 25px rgba(127, 86, 217, 0.4)' }}>
             <div className="px-6 py-12 sm:p-12 text-center">
               <h3 className="text-2xl font-bold text-white mb-4">Custom AI Model</h3>
               
               <div className="mt-6">
                 <p className="flex items-baseline justify-center">
-                  <span className="text-5xl font-extrabold text-white">$9</span>
+                  <span className="text-5xl font-extrabold text-white" style={{ textShadow: '0 0 15px rgba(127, 86, 217, 0.5)' }}>$9</span>
                   <span className="ml-1 text-xl text-gray-400">USD</span>
                 </p>
                 <p className="text-gray-400 mt-1">One-time payment</p>
@@ -29,25 +29,25 @@ const Pricing = () => {
               
               <ul className="mt-10 space-y-4 text-left">
                 <li className="flex items-start">
-                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ filter: 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="ml-3 text-gray-300">Train your personal AI model</span>
                 </li>
                 <li className="flex items-start">
-                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ filter: 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="ml-3 text-gray-300">Upload 10-15 photos</span>
                 </li>
                 <li className="flex items-start">
-                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ filter: 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="ml-3 text-gray-300">Training complete in ~10 minutes</span>
                 </li>
                 <li className="flex items-start">
-                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="flex-shrink-0 h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ filter: 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' }}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                   <span className="ml-3 text-gray-300">Unlimited model access</span>
@@ -57,7 +57,7 @@ const Pricing = () => {
               <div className="mt-12">
                 <Link
                   href="/auth/signin"
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 px-4 rounded-lg transition-all"
+                  className="w-full hero-button-primary block text-center"
                 >
                   Sign Up Now
                 </Link>

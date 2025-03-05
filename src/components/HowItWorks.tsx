@@ -47,7 +47,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-darkLight">
+    <section id="how-it-works" className="py-20" style={{ background: 'var(--violet-gradient)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">How It Works</h2>
@@ -60,9 +60,9 @@ const HowItWorks = () => {
           {steps.map((step) => (
             <div 
               key={step.id} 
-              className="bg-dark p-8 rounded-xl shadow-lg flex flex-col items-center text-center"
+              className="card-with-glow p-8 flex flex-col items-center text-center"
             >
-              <div className="rounded-full bg-dark/30 p-4 mb-6">
+              <div className="rounded-full bg-dark/30 p-4 mb-6" style={{ boxShadow: '0 0 15px rgba(127, 86, 217, 0.3)' }}>
                 {step.icon}
               </div>
               <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>

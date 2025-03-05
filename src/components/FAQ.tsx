@@ -16,14 +16,17 @@ const FAQItem = ({ question, answer }: FAQItemProps) => {
         className="flex justify-between items-center w-full py-5 text-left"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-lg font-medium text-white">{question}</span>
+        <span className="text-lg font-medium text-white" style={{ textShadow: isOpen ? '0 0 10px rgba(127, 86, 217, 0.4)' : 'none' }}>
+          {question}
+        </span>
         <svg
           className={`w-5 h-5 text-gray-400 transform transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
+            isOpen ? 'rotate-180 text-primary' : ''
           }`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          style={{ filter: isOpen ? 'drop-shadow(0 0 3px rgba(127, 86, 217, 0.5))' : 'none' }}
         >
           <path
             strokeLinecap="round"
@@ -100,7 +103,7 @@ const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-20 bg-dark">
+    <section id="faq" className="py-20" style={{ background: 'var(--violet-gradient)' }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="section-title">Frequently Asked Questions</h2>
@@ -109,7 +112,7 @@ const FAQ = () => {
           </p>
         </div>
 
-        <div className="space-y-0">
+        <div className="card-with-glow p-8">
           {faqItems.map((item, index) => (
             <FAQItem
               key={index}

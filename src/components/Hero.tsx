@@ -6,10 +6,10 @@ import Image from 'next/image';
 
 const Hero = () => {
   return (
-    <section className="pt-28 pb-16 px-4 md:pt-36 md:pb-24 bg-dark">
+    <section className="pt-28 pb-16 px-4 md:pt-36 md:pb-24" style={{ background: 'var(--dark-gradient)' }}>
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6" style={{ textShadow: '0 0 15px rgba(127, 86, 217, 0.4)' }}>
             Your Own AI Model
             <br />
             <span className="text-primary">for Just $9</span>
@@ -54,25 +54,25 @@ const Hero = () => {
         
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-4">
-            <div className="relative h-48 md:h-64 bg-darkLight rounded-lg overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
               {/* Replace with actual images later */}
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                 AI Generated Photo 1
               </div>
             </div>
-            <div className="relative h-48 md:h-64 bg-darkLight rounded-lg overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                 AI Generated Photo 2
               </div>
             </div>
           </div>
           <div className="space-y-4 pt-8">
-            <div className="relative h-48 md:h-64 bg-darkLight rounded-lg overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                 AI Generated Photo 3
               </div>
             </div>
-            <div className="relative h-48 md:h-64 bg-darkLight rounded-lg overflow-hidden">
+            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                 AI Generated Photo 4
               </div>
