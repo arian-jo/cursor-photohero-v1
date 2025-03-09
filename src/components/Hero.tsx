@@ -49,13 +49,13 @@ const Hero = () => {
             Upload 10 to 15 photos, and we&apos;ll train your custom PhotoHero AI model in about 10 minutes! Own your model and only pay for the images you generate!
           </p>
           
-          <div className="space-y-4 fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <div className="flex flex-row items-center space-x-4 fade-in-up" style={{ animationDelay: '0.6s' }}>
             <Link href="/auth/signin" className="hero-button-primary hover-scale inline-block">
               Create My Model Now
             </Link>
             
-            <Link href="/auth/signin" className="hero-button-secondary hover-scale inline-block ml-4">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 mr-2">
+            <Link href="/auth/signin" className="hero-button-secondary hover-scale inline-block flex items-center whitespace-nowrap">
+              <svg viewBox="0 0 24 24" className="w-5 h-5 mr-2 flex-shrink-0">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
