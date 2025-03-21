@@ -1,170 +1,161 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useAuthContext } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-
-const FloatingParticle = ({ delay = 0 }) => {
-  const style = {
-    animationDelay: `${delay}s`,
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-  };
-
-  return (
-    <div 
-      className="floating-particle" 
-      style={style}
-    >
-      <svg width="10" height="10" viewBox="0 0 10 10">
-        <circle cx="5" cy="5" r="5" fill="rgba(127, 86, 217, 0.3)" />
-      </svg>
-    </div>
-  );
-};
+import { useAuthContext } from '@/context/AuthContext';
+import { useHasActiveSubscription } from '@/context/AuthContext';
 
 const Hero = () => {
-  const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { signInWithGoogle, user, loading } = useAuthContext();
+  const hasActiveSubscription = useHasActiveSubscription();
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const handleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Iniciar sesión con Google
+      await signInWithGoogle();
+
+      // Si el inicio de sesión es exitoso, el usuario será actualizado en el contexto
+      // Ahora redirigimos a la página de suscripción
+      router.push('/subscription');
+      
+    } catch (err: any) {
+      console.error('Error during sign in:', err);
+      setError(err.message || 'An error occurred during sign in');
+      setIsLoading(false);
+    }
+  };
+
+  const handleGetStarted = () => {
+    if (user) {
+      // Si el usuario ya tiene una suscripción activa, redirigir a la página de modelos
+      if (hasActiveSubscription) {
+        router.push('/train');
+      } else {
+        // Si el usuario está autenticado pero no tiene suscripción, redirigir a la página de suscripción
+        router.push('/subscription');
+      }
+    } else {
+      // Si el usuario no está autenticado, iniciar el proceso de autenticación
+      handleSignIn();
+    }
+  };
 
   useEffect(() => {
-    // If user is logged in, redirect to payment page
+    // If user is logged in, redirect to subscription page instead of payment
     if (user && !loading) {
-      router.push('/payment');
+      router.push('/subscription');
     }
   }, [user, loading, router]);
 
-  const handleGoogleSignIn = async () => {
-    try {
-      console.log('Initiating Google sign in from landing page...');
-      await signInWithGoogle();
-      // The redirect will happen automatically via the useEffect above
-    } catch (error) {
-      console.error('Error during Google sign in from landing page:', error);
-    }
-  };
-
   return (
-    <section className="relative pt-28 pb-16 px-4 md:pt-36 md:pb-24 overflow-hidden" style={{ background: 'var(--dark-gradient)' }}>
-      {/* Partículas decorativas */}
-      {mounted && Array.from({ length: 20 }).map((_, i) => (
-        <FloatingParticle key={i} delay={i * 0.2} />
-      ))}
+    <div className="relative overflow-hidden bg-dark">
+      {/* Fondo con efecto de desplazamiento */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-dark/60 to-dark"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      </div>
 
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        <div className="text-center md:text-left fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6" style={{ textShadow: '0 0 15px rgba(127, 86, 217, 0.4)' }}>
-            Your Own AI Model
-            <br />
-            <span className="text-primary">for Just $9</span>
+      {/* Contenido principal */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-32 sm:pb-24">
+        <div className="text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            The Ultimate AI Photo <span className="text-primary">Generation Suite</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto md:mx-0 fade-in-up" style={{ animationDelay: '0.4s' }}>
-            Upload 10 to 15 photos, and we&apos;ll train your custom PhotoHero AI model in about 10 minutes! Own your model and only pay for the images you generate!
+          <p className="max-w-3xl mx-auto text-gray-300 text-lg md:text-xl mb-8">
+            Create stunning, personalized photos of yourself or any subject in unlimited styles. 
+            Our advanced AI generates professional quality images in seconds.
           </p>
           
-          <div className="flex flex-row items-center space-x-4 fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <Link href="/auth/signin" className="hero-button-primary hover-scale inline-block">
-              Create My Model Now
-            </Link>
-            
-            <button 
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              className={`hero-button-secondary hover-scale inline-block flex items-center whitespace-nowrap ${
-                loading ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10">
+            <button
+              onClick={handleGetStarted}
+              disabled={isLoading}
+              className="px-8 py-3 bg-primary text-white rounded-xl font-medium text-lg hover:bg-primary/90 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center glow-button"
             >
-              {loading ? (
+              {isLoading ? (
                 <>
-                  <span className="animate-spin h-5 w-5 border-2 border-gray-400 border-t-gray-800 rounded-full mr-2"></span>
-                  Loading...
-                </>
-              ) : (
-                <>
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 mr-2 flex-shrink-0">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    ></path>
-                    <path
-                      fill="#34A853"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    ></path>
-                    <path
-                      fill="#FBBC05"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    ></path>
-                    <path
-                      fill="#EA4335"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    ></path>
+                  <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Sign up with Google
+                  Signing in...
                 </>
+              ) : user ? (
+                hasActiveSubscription ? 'Go to Models' : 'Choose Plan'
+              ) : (
+                'Get Started'
               )}
             </button>
+            
+            <a
+              href="#how-it-works"
+              className="px-8 py-3 bg-dark border border-gray-700 text-white rounded-xl font-medium text-lg hover:bg-darkLight transition-all duration-300"
+            >
+              How It Works
+            </a>
           </div>
           
-          <p className="text-gray-400 mt-6 fade-in-up" style={{ animationDelay: '0.8s' }}>
-            <span className="font-medium">20+ creators</span> trust PhotoHero
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <Image 
-                src="https://i.imgur.com/emFdCuj.jpeg"
-                alt="AI Generated Portrait" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+          {error && (
+            <div className="max-w-md mx-auto mb-8 p-3 bg-red-900/30 border border-red-800 rounded-lg text-red-200 text-sm">
+              {error}
             </div>
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.5s' }}>
-              <Image 
-                src="https://i.imgur.com/WCK9kDd.jpeg" 
-                alt="AI Generated Portrait" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+          )}
+          
+          {/* Feature badges */}
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            <div className="bg-darkLight rounded-full px-4 py-2 text-sm text-gray-300 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              Professional Quality
+            </div>
+            <div className="bg-darkLight rounded-full px-4 py-2 text-sm text-gray-300 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+              </svg>
+              Unlimited Styles
+            </div>
+            <div className="bg-darkLight rounded-full px-4 py-2 text-sm text-gray-300 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+              </svg>
+              Privacy Protected
+            </div>
+            <div className="bg-darkLight rounded-full px-4 py-2 text-sm text-gray-300 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-primary mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
+              Instant Generation
             </div>
           </div>
-          <div className="space-y-4 pt-8">
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.4s' }}>
-              <Image 
-                src="https://i.imgur.com/LXrLXna.jpeg" 
-                alt="AI Generated Portrait" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-            <div className="relative h-48 md:h-64 card-with-glow overflow-hidden hover-scale parallax fade-in-up" style={{ animationDelay: '0.6s' }}>
-              <Image 
-                src="https://i.imgur.com/RZoz4wd.jpeg" 
-                alt="AI Generated Portrait" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
+        </div>
+        
+        {/* Muestras de imágenes */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 max-w-4xl mx-auto">
+          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
+            <Image src="/images/sample-1.jpg" alt="AI Generated Photo" fill className="object-cover" />
+          </div>
+          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
+            <Image src="/images/sample-2.jpg" alt="AI Generated Photo" fill className="object-cover" />
+          </div>
+          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
+            <Image src="/images/sample-3.jpg" alt="AI Generated Photo" fill className="object-cover" />
+          </div>
+          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
+            <Image src="/images/sample-4.jpg" alt="AI Generated Photo" fill className="object-cover" />
           </div>
         </div>
       </div>
-
-      {/* Indicador de scroll */}
-      <div className="scroll-indicator hidden md:block" />
-    </section>
+    </div>
   );
 };
 

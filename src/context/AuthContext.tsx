@@ -2,6 +2,7 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { UserSubscription } from '@/types/subscription';
 
 // Create a context with null as default value
 type AuthContextType = ReturnType<typeof useAuth> | null;
@@ -24,4 +25,16 @@ export const useAuthContext = () => {
     throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
+};
+
+// Simplified hook to get subscription data
+export const useSubscription = (): UserSubscription | null => {
+  const authContext = useAuthContext();
+  return authContext?.subscription;
+};
+
+// Hook to check if a user has an active subscription
+export const useHasActiveSubscription = (): boolean => {
+  const subscription = useSubscription();
+  return subscription !== null && subscription.status === 'active';
 };

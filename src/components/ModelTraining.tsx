@@ -4,6 +4,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import JSZip from 'jszip';
 import { uploadFile, trainLoraModel } from '@/services/falApi';
+import { useSubscriptionManagement } from '@/hooks/useSubscription';
+import { useAuthContext } from '@/context/AuthContext';
+
+// Costo en créditos para entrenar un modelo
+const MODEL_TRAINING_CREDIT_COST = 30;
 
 const ModelTraining = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -17,6 +22,9 @@ const ModelTraining = () => {
   const [createMasks, setCreateMasks] = useState(true);
   const [isStyle, setIsStyle] = useState(false);
   const [trainingResult, setTrainingResult] = useState<any>(null);
+  
+  const { subscription } = useAuthContext();
+  const { consumeCredits, incrementModelsCreated } = useSubscriptionManagement();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -74,12 +82,24 @@ const ModelTraining = () => {
       setError('Please enter your fal.ai API key');
       return;
     }
+    
+    // Verificar si hay suficientes créditos disponibles
+    if (!subscription || subscription.availableCredits < MODEL_TRAINING_CREDIT_COST) {
+      setError(`You need at least ${MODEL_TRAINING_CREDIT_COST} credits to train a model. Please upgrade your subscription.`);
+      return;
+    }
 
     try {
       setLoading(true);
       setProgress([]);
       setError(null);
       setTrainingResult(null);
+      
+      // Consumir créditos
+      const creditUsed = await consumeCredits(MODEL_TRAINING_CREDIT_COST);
+      if (!creditUsed) {
+        throw new Error('Failed to use credits. Please try again.');
+      }
       
       // Create a zip file from the selected files
       const zipFile = await createZipFromFiles(selectedFiles);
@@ -101,10 +121,13 @@ const ModelTraining = () => {
         }
       );
       
+      // Incrementar el contador de modelos creados
+      await incrementModelsCreated();
+      
       setTrainingResult(result);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error during training:', err);
-      setError('An error occurred during model training. Please try again.');
+      setError(err.message || 'An error occurred during model training. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -127,6 +150,21 @@ const ModelTraining = () => {
   return (
     <div className="w-full max-w-4xl mx-auto bg-darkLight p-6 rounded-xl shadow-lg">
       <h2 className="text-2xl text-white font-bold mb-6">Train Your Custom AI Model</h2>
+      
+      {/* Credit information */}
+      <div className="mb-6 p-4 bg-dark/50 rounded-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-gray-300">Model training cost: <span className="text-primary font-bold">{MODEL_TRAINING_CREDIT_COST} credits</span></p>
+            <p className="text-xs text-gray-400 mt-1">Credits will be deducted from your account upon successful training</p>
+          </div>
+          {subscription && (
+            <div className="bg-dark px-4 py-2 rounded-md">
+              <p className="text-sm text-gray-300">Available credits: <span className="text-white font-bold">{subscription.availableCredits}</span></p>
+            </div>
+          )}
+        </div>
+      </div>
       
       {/* API Key Input */}
       <div className="mb-6">
@@ -201,25 +239,30 @@ const ModelTraining = () => {
         
         <div>
           <label className="block text-gray-300 mb-2">Training Steps</label>
-          <input
-            type="number"
+          <select
             value={steps}
-            onChange={(e) => setSteps(parseInt(e.target.value) || 1000)}
-            min={500}
-            max={2000}
+            onChange={(e) => setSteps(Number(e.target.value))}
             className="w-full bg-dark text-white py-2 px-3 rounded-lg border border-gray-700 focus:outline-none focus:border-primary"
-          />
+          >
+            <option value={1000}>1000 Steps (Standard)</option>
+            <option value={1500}>1500 Steps (Better Quality)</option>
+            <option value={2000}>2000 Steps (Best Quality)</option>
+          </select>
         </div>
-        
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex items-center">
           <input
             type="checkbox"
             id="createMasks"
             checked={createMasks}
             onChange={(e) => setCreateMasks(e.target.checked)}
-            className="mr-2"
+            className="w-4 h-4 text-primary bg-dark border-gray-600 rounded focus:ring-primary"
           />
-          <label htmlFor="createMasks" className="text-gray-300">Create Segmentation Masks</label>
+          <label htmlFor="createMasks" className="ml-2 text-sm text-gray-300">
+            Use face detection (recommended)
+          </label>
         </div>
         
         <div className="flex items-center">
@@ -228,108 +271,100 @@ const ModelTraining = () => {
             id="isStyle"
             checked={isStyle}
             onChange={(e) => setIsStyle(e.target.checked)}
-            className="mr-2"
+            className="w-4 h-4 text-primary bg-dark border-gray-600 rounded focus:ring-primary"
           />
-          <label htmlFor="isStyle" className="text-gray-300">Train as Style LoRA</label>
+          <label htmlFor="isStyle" className="ml-2 text-sm text-gray-300">
+            This is a style, not a person
+          </label>
         </div>
-      </div>
-      
-      {/* Actions */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <button
-          onClick={handleTraining}
-          disabled={loading || selectedFiles.length === 0 || !apiKey}
-          className={`py-3 px-6 rounded-lg font-medium ${
-            loading || selectedFiles.length === 0 || !apiKey
-              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-primary text-white hover:bg-primary-dark transition-colors'
-          }`}
-        >
-          {loading ? (
-            <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Training Model...
-            </span>
-          ) : (
-            'Train Model'
-          )}
-        </button>
-        
-        <button
-          onClick={handleReset}
-          className="py-3 px-6 bg-dark rounded-lg font-medium text-white hover:bg-gray-800 transition-colors"
-        >
-          Reset
-        </button>
       </div>
       
       {/* Error Message */}
       {error && (
-        <div className="mb-6 p-3 bg-red-900/50 text-red-300 rounded-lg">
-          {error}
+        <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-200">
+          <p>{error}</p>
         </div>
       )}
       
       {/* Training Progress */}
-      {progress.length > 0 && (
-        <div className="mb-6">
+      {progress.length > 0 && !trainingResult && (
+        <div className="mb-6 p-4 bg-dark rounded-lg">
           <h3 className="text-white font-medium mb-2">Training Progress</h3>
-          <div className="bg-dark p-4 rounded-lg max-h-60 overflow-y-auto text-sm">
+          <div className="max-h-40 overflow-y-auto text-sm">
             {progress.map((message, index) => (
-              <div key={index} className="text-gray-300 mb-1">
+              <p key={index} className="text-gray-400 py-1 border-b border-gray-800 last:border-0">
                 {message}
-              </div>
+              </p>
             ))}
+          </div>
+          <div className="mt-4 w-full bg-gray-800 rounded-full h-2.5">
+            <div className="bg-primary h-2.5 rounded-full animate-pulse w-full"></div>
           </div>
         </div>
       )}
       
       {/* Training Result */}
       {trainingResult && (
-        <div className="mb-6">
+        <div className="mb-6 p-4 bg-green-900/30 border border-green-800 rounded-lg">
           <h3 className="text-white font-medium mb-2">Training Complete!</h3>
-          <div className="bg-dark p-4 rounded-lg">
-            <div className="mb-4">
-              <p className="text-gray-300 mb-2">LoRA Model File:</p>
-              <a 
-                href={trainingResult.diffusersLoraFile.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline break-all"
-              >
-                {trainingResult.diffusersLoraFile.url}
-              </a>
-            </div>
-            
-            <div className="mb-4">
-              <p className="text-gray-300 mb-2">Config File:</p>
-              <a 
-                href={trainingResult.configFile.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline break-all"
-              >
-                {trainingResult.configFile.url}
-              </a>
-            </div>
-            
-            {trainingResult.debugPreprocessedOutput && (
-              <div>
-                <p className="text-gray-300 mb-2">Preprocessed Output:</p>
-                <a 
-                  href={trainingResult.debugPreprocessedOutput.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline break-all"
-                >
-                  {trainingResult.debugPreprocessedOutput.url}
-                </a>
-              </div>
-            )}
+          <p className="text-green-200 mb-4">
+            Your custom model has been successfully trained and is ready to use.
+          </p>
+          
+          <div className="bg-dark p-4 rounded-lg mb-4">
+            <h4 className="text-white text-sm font-medium mb-2">Model Information</h4>
+            <code className="block bg-black/50 p-3 rounded text-xs text-gray-300 overflow-x-auto">
+              {JSON.stringify(trainingResult, null, 2)}
+            </code>
           </div>
+          
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleReset}
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors text-sm"
+            >
+              Train Another Model
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Training Button */}
+      {!trainingResult && (
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={handleTraining}
+            disabled={loading || selectedFiles.length === 0 || !apiKey || (subscription?.availableCredits || 0) < MODEL_TRAINING_CREDIT_COST}
+            className={`px-6 py-3 bg-primary text-white rounded-lg transition-colors ${
+              loading || selectedFiles.length === 0 || !apiKey || (subscription?.availableCredits || 0) < MODEL_TRAINING_CREDIT_COST
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:bg-primary/90'
+            }`}
+          >
+            {loading ? (
+              <span className="flex items-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Training Model...
+              </span>
+            ) : (
+              <>Start Training <span className="ml-1">({MODEL_TRAINING_CREDIT_COST} credits)</span></>
+            )}
+          </button>
+          
+          {selectedFiles.length > 0 && (
+            <button
+              onClick={handleReset}
+              disabled={loading}
+              className={`px-4 py-3 bg-gray-700 text-white rounded-lg transition-colors ${
+                loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-600'
+              }`}
+            >
+              Reset
+            </button>
+          )}
         </div>
       )}
     </div>

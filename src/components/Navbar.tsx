@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuthContext } from '@/context/AuthContext';
+import { SUBSCRIPTION_LIMITS } from '@/types/subscription';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, signOut } = useAuthContext();
+  const { user, subscription, signOut } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,27 +74,65 @@ const Navbar = () => {
               
               {user ? (
                 <div className="flex items-center space-x-4">
+                  {subscription && (
+                    <div className="bg-darkLight rounded-full px-3 py-1 flex items-center space-x-2">
+                      <span className="text-primary text-xs font-semibold capitalize">{subscription.planId}</span>
+                      <div className="h-3 border-l border-gray-600"></div>
+                      <span className="text-gray-300 text-xs">{subscription.availableCredits} credits</span>
+                    </div>
+                  )}
                   <Link
                     href="/train"
                     className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
                   >
                     Train Model
                   </Link>
-                  {user.photoURL && (
-                    <Image 
-                      src={user.photoURL} 
-                      alt={user.displayName || 'User'} 
-                      width={32} 
-                      height={32} 
-                      className="rounded-full"
-                    />
-                  )}
-                  <button
-                    onClick={handleSignOut}
-                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
-                  >
-                    Sign Out
-                  </button>
+                  <div className="relative group">
+                    {user.photoURL && (
+                      <Image 
+                        src={user.photoURL} 
+                        alt={user.displayName || 'User'} 
+                        width={32} 
+                        height={32} 
+                        className="rounded-full cursor-pointer border-2 border-transparent hover:border-primary transition-all"
+                      />
+                    )}
+                    
+                    <div className="absolute right-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 bg-darkLight border border-gray-700 rounded-lg shadow-lg z-30">
+                      <div className="p-3 border-b border-gray-700">
+                        <p className="text-sm font-medium text-white">{user.displayName}</p>
+                        <p className="text-xs text-gray-400">{user.email}</p>
+                      </div>
+                      
+                      {subscription && (
+                        <div className="p-3 border-b border-gray-700">
+                          <div className="flex justify-between items-center mb-1">
+                            <p className="text-xs text-gray-400">Plan:</p>
+                            <p className="text-xs font-medium text-primary capitalize">{subscription.planId}</p>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <p className="text-xs text-gray-400">Credits:</p>
+                            <p className="text-xs font-medium text-white">{subscription.availableCredits}</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="p-2">
+                        <Link
+                          href="/subscription"
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
+                        >
+                          Manage Subscription
+                        </Link>
+                        <button
+                          onClick={handleSignOut}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-md"
+                        >
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <Link
@@ -181,12 +220,33 @@ const Navbar = () => {
           
           {user ? (
             <>
+              {subscription && (
+                <div className="px-3 py-2">
+                  <div className="bg-darkLight rounded-lg p-3">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs text-gray-400">Subscription Plan:</span>
+                      <span className="text-sm font-medium text-primary capitalize">{subscription.planId}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-gray-400">Available Credits:</span>
+                      <span className="text-sm font-medium text-white">{subscription.availableCredits}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
               <Link
                 href="/train"
                 className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Train Model
+              </Link>
+              <Link
+                href="/subscription"
+                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Manage Subscription
               </Link>
               <div className="flex items-center space-x-2 px-3 py-2">
                 {user.photoURL && (
@@ -199,18 +259,18 @@ const Navbar = () => {
                   />
                 )}
                 <span className="text-gray-300">{user.displayName}</span>
-                <button
-                  onClick={handleSignOut}
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
-                >
-                  Sign Out
-                </button>
               </div>
+              <button
+                onClick={handleSignOut}
+                className="text-gray-300 hover:text-white block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+              >
+                Sign Out
+              </button>
             </>
           ) : (
             <Link
               href="/auth/signin"
-              className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale glow-border"
+              className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
               onClick={() => setIsMenuOpen(false)}
             >
               Get Started
