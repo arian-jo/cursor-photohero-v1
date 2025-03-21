@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { PAYPAL_CLIENT_ID } from '@/config/paypal';
 
 interface PayPalButtonProps {
   amount: string;
@@ -10,9 +11,9 @@ interface PayPalButtonProps {
 }
 
 const PayPalButton: React.FC<PayPalButtonProps> = ({ amount, onSuccess, onError }) => {
-  // Inicializar las opciones de PayPal
+  // Inicializar las opciones de PayPal con credenciales de Sandbox
   const initialOptions = {
-    clientId: "AU_8xVFcuBU2vbx_wWgSJLbXwNLZ_4-fVgSXXtYdW8Ij5lhQEGMdkU8CjHxBDZF85UpX9jnTbqtMHSH2",
+    clientId: PAYPAL_CLIENT_ID,
     currency: "USD",
     intent: "capture",
   };
