@@ -1,7 +1,6 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  install_command = "chmod +x ./netlify-install.sh && ./netlify-install.sh"
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"

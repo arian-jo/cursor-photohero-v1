@@ -16,10 +16,8 @@ const nextConfig = {
       },
     ],
   },
-  // Simplified webpack config that should work better on Netlify
-  webpack: (config) => {
-    return config;
-  },
+  // Ensure SWC is used for compilation
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
