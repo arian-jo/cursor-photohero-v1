@@ -19,6 +19,7 @@
     "react-intersection-observer": "^9.15.1"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.10.1",
     "@types/node": "^20.10.4",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.17",
