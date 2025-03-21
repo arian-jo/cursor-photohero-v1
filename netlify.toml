@@ -13,3 +13,19 @@
 [functions]
   included_files = [".next/standalone/**"]
   node_bundler = "esbuild"
+
+# Reglas de redirección para autenticación
+[[redirects]]
+  from = "/auth/*"
+  to = "/auth/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/auth/login"
+  status = 301
+
+[[redirects]]
+  from = "/logout"
+  to = "/auth/logout"
+  status = 301
