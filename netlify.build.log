@@ -1,0 +1,36 @@
+# PhotoHero Build Log
+
+## Problemas de Build detectados (2025-03-21)
+
+### Problema: "Build script returned non-zero exit code: 2"
+El problema se debía a un error de tipo en el archivo src/services/falApi.ts. El error específico indicaba:
+"Type 'File' is missing the following properties from type '{ url: string; contentType: string; fileName: string; fileSize: number; }': contentType, fileName, fileSize"
+
+### Solución aplicada:
+1. Se refactorizó la interfaz de respuesta de archivos en falApi.ts, creando una interfaz dedicada `FalFileResponse`.
+2. Se añadió el operador de aserción de tipo (`as`) para asegurar que los objetos devueltos por la API sean compatibles con nuestra interfaz.
+3. Se actualizó la configuración de netlify.toml para mejorar la compatibilidad con Next.js:
+   - Se agregó la flag `--legacy-peer-deps` para evitar problemas con las dependencias pares.
+   - Se añadieron redirecciones específicas para recursos de Next.js.
+   - Se optimizó la configuración para el despliegue de aplicaciones SPA.
+
+### Pasos para verificar:
+1. Se ejecutó `npm run build` localmente para confirmar que la compilación funciona correctamente.
+2. Se actualizó el repositorio con los cambios.
+
+## Consideraciones para futuros despliegues
+
+### Variables de entorno requeridas en Netlify:
+- NEXT_PUBLIC_FIREBASE_API_KEY
+- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+- NEXT_PUBLIC_FIREBASE_PROJECT_ID
+- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+- NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+- NEXT_PUBLIC_FIREBASE_APP_ID
+- NEXT_PUBLIC_PAYPAL_CLIENT_ID
+- FAL_API_KEY (opcional para funcionalidad del lado del servidor)
+
+### Optimizaciones futuras:
+- Considerar la implementación de Incremental Static Regeneration (ISR) para mejorar el rendimiento.
+- Evaluar el uso de Next.js middleware para manejar la autenticación y autorización de manera más eficiente.
+- Considerar la configuración de pruebas automáticas previas al despliegue.

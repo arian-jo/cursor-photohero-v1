@@ -19,25 +19,17 @@ interface LoraTrainingInput {
   isStyle?: boolean;
 }
 
+export interface FalFileResponse {
+  url: string;
+  contentType: string;
+  fileName: string;
+  fileSize: number;
+}
+
 interface LoraTrainingResult {
-  diffusersLoraFile: {
-    url: string;
-    contentType: string;
-    fileName: string;
-    fileSize: number;
-  };
-  configFile: {
-    url: string;
-    contentType: string;
-    fileName: string;
-    fileSize: number;
-  };
-  debugPreprocessedOutput?: {
-    url: string;
-    contentType: string;
-    fileName: string;
-    fileSize: number;
-  };
+  diffusersLoraFile: FalFileResponse;
+  configFile: FalFileResponse;
+  debugPreprocessedOutput?: FalFileResponse;
 }
 
 // Function to upload a file to fal.ai storage
@@ -75,10 +67,11 @@ export const trainLoraModel = async (
       },
     });
 
+    // Ensure the response matches our interface
     return {
-      diffusersLoraFile: result.data.diffusers_lora_file,
-      configFile: result.data.config_file,
-      debugPreprocessedOutput: result.data.debug_preprocessed_output
+      diffusersLoraFile: result.data.diffusers_lora_file as FalFileResponse,
+      configFile: result.data.config_file as FalFileResponse,
+      debugPreprocessedOutput: result.data.debug_preprocessed_output as FalFileResponse
     };
   } catch (error) {
     console.error("Error training LoRA model:", error);
@@ -133,10 +126,11 @@ export const getLoraTrainingResult = async (
       requestId
     });
 
+    // Ensure the response matches our interface
     return {
-      diffusersLoraFile: result.data.diffusers_lora_file,
-      configFile: result.data.config_file,
-      debugPreprocessedOutput: result.data.debug_preprocessed_output
+      diffusersLoraFile: result.data.diffusers_lora_file as FalFileResponse,
+      configFile: result.data.config_file as FalFileResponse,
+      debugPreprocessedOutput: result.data.debug_preprocessed_output as FalFileResponse
     };
   } catch (error) {
     console.error("Error getting LoRA training result:", error);
