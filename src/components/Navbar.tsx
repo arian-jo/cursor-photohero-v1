@@ -73,6 +73,12 @@ const Navbar = () => {
               
               {user ? (
                 <div className="flex items-center space-x-4">
+                  <Link
+                    href="/train"
+                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
+                  >
+                    Train Model
+                  </Link>
                   {user.photoURL && (
                     <Image 
                       src={user.photoURL} 
@@ -174,24 +180,33 @@ const Navbar = () => {
           </Link>
           
           {user ? (
-            <div className="flex items-center space-x-2 px-3 py-2">
-              {user.photoURL && (
-                <Image 
-                  src={user.photoURL} 
-                  alt={user.displayName || 'User'} 
-                  width={28} 
-                  height={28} 
-                  className="rounded-full"
-                />
-              )}
-              <span className="text-gray-300">{user.displayName}</span>
-              <button
-                onClick={handleSignOut}
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+            <>
+              <Link
+                href="/train"
+                className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+                onClick={() => setIsMenuOpen(false)}
               >
-                Sign Out
-              </button>
-            </div>
+                Train Model
+              </Link>
+              <div className="flex items-center space-x-2 px-3 py-2">
+                {user.photoURL && (
+                  <Image 
+                    src={user.photoURL} 
+                    alt={user.displayName || 'User'} 
+                    width={28} 
+                    height={28} 
+                    className="rounded-full"
+                  />
+                )}
+                <span className="text-gray-300">{user.displayName}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </>
           ) : (
             <Link
               href="/auth/signin"
