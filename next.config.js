@@ -18,6 +18,8 @@ const nextConfig = {
   },
   // Ensure SWC is used for compilation
   swcMinify: true,
+  // Configuración para Netlify deployment
+  output: 'standalone',
 };
 
 module.exports = nextConfig;
