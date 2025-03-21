@@ -1,24 +1,57 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import PayPalButton from '@/components/PayPalButton';
+import { useAuthContext } from '@/context/AuthContext';
 
 const PaymentPage = () => {
   const router = useRouter();
+  const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  
+  // Redirect if not logged in
+  React.useEffect(() => {
+    if (!user) {
+      router.push('/auth/signin');
+    }
+  }, [user, router]);
 
-  // Mock function to simulate PayPal payment
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (details: any) => {
     setLoading(true);
-    // In a real app, this would process the actual payment
-    console.log('Processing payment...');
-    // Simulate successful payment and redirect to upload page
+    console.log('Payment successful!', details);
+    
+    // In a real app, you would also:
+    // 1. Verify the payment on your backend
+    // 2. Store the payment details in your database
+    // 3. Link the payment to the user account
+    
+    // For now, we just redirect to the upload page
     setTimeout(() => {
       router.push('/upload');
-    }, 2000);
+    }, 1000);
   };
+
+  const handlePaymentError = (error: any) => {
+    console.error('Payment failed:', error);
+    setPaymentError('There was a problem processing your payment. Please try again.');
+    setLoading(false);
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-dark flex items-center justify-center">
+        <div className="animate-pulse flex space-x-4 justify-center items-center">
+          <div className="h-4 w-4 bg-primary rounded-full"></div>
+          <div className="h-4 w-4 bg-primary rounded-full"></div>
+          <div className="h-4 w-4 bg-primary rounded-full"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-dark">
@@ -41,7 +74,6 @@ const PaymentPage = () => {
           </div>
           
           <div className="space-y-4">
-            {/* PayPal Button Mock */}
             {loading ? (
               <div className="py-3 text-center">
                 <div className="animate-pulse flex space-x-4 justify-center items-center">
@@ -52,12 +84,20 @@ const PaymentPage = () => {
                 <p className="mt-2 text-gray-300">Processing your payment...</p>
               </div>
             ) : (
-              <button
-                onClick={handlePaymentSuccess}
-                className="w-full bg-[#0070BA] hover:bg-[#005ea6] text-white font-semibold py-3 px-4 rounded-lg transition-all"
-              >
-                Pay with PayPal
-              </button>
+              <>
+                {paymentError && (
+                  <div className="bg-red-900/30 border border-red-500 text-red-200 px-4 py-2 rounded-lg mb-4">
+                    {paymentError}
+                  </div>
+                )}
+                <div className="bg-white rounded-lg p-4">
+                  <PayPalButton 
+                    amount="9.00"
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                  />
+                </div>
+              </>
             )}
             
             <p className="text-center text-gray-500 text-sm">
@@ -82,4 +122,4 @@ const PaymentPage = () => {
   );
 };
 
-export default PaymentPage; 
+export default PaymentPage;
