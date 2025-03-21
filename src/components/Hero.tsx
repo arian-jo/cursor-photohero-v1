@@ -6,6 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/context/AuthContext';
 import { useHasActiveSubscription } from '@/context/AuthContext';
 
+// URL de placeholder para imágenes (fuente segura y estable)
+const PLACEHOLDER_IMAGES = [
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04'
+];
+
 const Hero = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,18 +149,18 @@ const Hero = () => {
         
         {/* Muestras de imágenes */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 max-w-4xl mx-auto">
-          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-1.jpg" alt="AI Generated Photo" fill className="object-cover" />
-          </div>
-          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-2.jpg" alt="AI Generated Photo" fill className="object-cover" />
-          </div>
-          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-3.jpg" alt="AI Generated Photo" fill className="object-cover" />
-          </div>
-          <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-4.jpg" alt="AI Generated Photo" fill className="object-cover" />
-          </div>
+          {PLACEHOLDER_IMAGES.map((src, index) => (
+            <div key={index} className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
+              <Image 
+                src={`${src}?auto=format&fit=crop&w=600&q=80`} 
+                alt={`AI Generated Photo ${index + 1}`} 
+                fill 
+                sizes="(max-width: 640px) 40vw, 20vw"
+                className="object-cover" 
+                unoptimized
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
