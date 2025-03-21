@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getAnalytics, isSupported, Analytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -16,14 +16,14 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let firebaseApp: FirebaseApp;
-let analytics: Analytics | undefined;
+let firebaseApp: any;
+let analytics: any;
 
 if (!getApps().length) {
   firebaseApp = initializeApp(firebaseConfig);
   // Only initialize analytics if it's supported (not in SSR)
   if (typeof window !== 'undefined') {
-    isSupported().then(supported => {
+    isSupported().then((supported: boolean) => {
       if (supported) {
         analytics = getAnalytics(firebaseApp);
       }

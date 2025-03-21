@@ -16,13 +16,8 @@ const nextConfig = {
       },
     ],
   },
+  // Simplified webpack config that should work better on Netlify
   webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'firebase/app': require.resolve('firebase/app'),
-      'firebase/auth': require.resolve('firebase/auth'),
-      'firebase/analytics': require.resolve('firebase/analytics'),
-    };
     return config;
   },
 };

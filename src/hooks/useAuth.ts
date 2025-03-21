@@ -1,55 +1,65 @@
 import { useState, useEffect } from 'react';
 import { 
-  User, 
   signInWithPopup, 
   signOut as firebaseSignOut,
   onAuthStateChanged
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase/config';
 
+interface AuthState {
+  user: any | null;
+  loading: boolean;
+  error: Error | null;
+}
+
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    loading: true,
+    error: null
+  });
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+      setState({
+        user,
+        loading: false,
+        error: null
+      });
     });
 
-    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
-    setError(null);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
-    } catch (error: any) {
-      setError(error.message || 'An error occurred during sign in');
-      console.error('Sign in error:', error);
-      return null;
+      setState({ ...state, loading: true });
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      setState({
+        ...state,
+        error: error as Error,
+        loading: false
+      });
     }
   };
 
   const signOut = async () => {
     try {
+      setState({ ...state, loading: true });
       await firebaseSignOut(auth);
-    } catch (error: any) {
-      setError(error.message || 'An error occurred during sign out');
-      console.error('Sign out error:', error);
+    } catch (error) {
+      setState({
+        ...state,
+        error: error as Error,
+        loading: false
+      });
     }
   };
 
   return {
-    user,
-    loading,
-    error,
+    ...state,
     signInWithGoogle,
-    signOut,
+    signOut
   };
 };
-
-export default useAuth;

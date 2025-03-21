@@ -1,18 +1,11 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { User } from 'firebase/auth';
-import useAuth from '@/hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  signInWithGoogle: () => Promise<User | null>;
-  signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create a context with null as default value
+type AuthContextType = ReturnType<typeof useAuth> | null;
+const AuthContext = createContext<AuthContextType>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const auth = useAuth();
@@ -24,12 +17,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Custom hook to use the auth context
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
-  
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuthContext must be used within an AuthProvider');
   }
-  
   return context;
 };

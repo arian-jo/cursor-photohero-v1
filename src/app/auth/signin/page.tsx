@@ -19,11 +19,9 @@ const SignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const user = await signInWithGoogle();
-      if (user) {
-        console.log('Successfully signed in:', user.displayName);
-        router.push('/payment');
-      }
+      // Call signInWithGoogle without expecting a return value
+      await signInWithGoogle();
+      // The authentication state will be updated through the auth state listener
     } catch (error) {
       console.error('Error signing in:', error);
     }
