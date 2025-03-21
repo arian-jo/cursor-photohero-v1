@@ -3,10 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuthContext } from '@/context/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, signOut } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +21,15 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [scrolled]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <nav 
@@ -59,12 +70,33 @@ const Navbar = () => {
               >
                 FAQ
               </Link>
-              <Link
-                href="/auth/signin"
-                className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover-scale glow-border"
-              >
-                Get Started
-              </Link>
+              
+              {user ? (
+                <div className="flex items-center space-x-4">
+                  {user.photoURL && (
+                    <Image 
+                      src={user.photoURL} 
+                      alt={user.displayName || 'User'} 
+                      width={32} 
+                      height={32} 
+                      className="rounded-full"
+                    />
+                  )}
+                  <button
+                    onClick={handleSignOut}
+                    className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover-scale glow-border"
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
           <div className="md:hidden">
@@ -140,17 +172,39 @@ const Navbar = () => {
           >
             FAQ
           </Link>
-          <Link
-            href="/auth/signin"
-            className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale glow-border"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Get Started
-          </Link>
+          
+          {user ? (
+            <div className="flex items-center space-x-2 px-3 py-2">
+              {user.photoURL && (
+                <Image 
+                  src={user.photoURL} 
+                  alt={user.displayName || 'User'} 
+                  width={28} 
+                  height={28} 
+                  className="rounded-full"
+                />
+              )}
+              <span className="text-gray-300">{user.displayName}</span>
+              <button
+                onClick={handleSignOut}
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/auth/signin"
+              className="bg-primary hover:bg-primary/90 text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale glow-border"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Get Started
+            </Link>
+          )}
         </div>
       </div>
     </nav>
   );
 };
 
-export default Navbar; 
+export default Navbar;

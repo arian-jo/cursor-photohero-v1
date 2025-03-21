@@ -4,19 +4,29 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuthContext } from '@/context/AuthContext';
 
-// Note: In a real app, you would initialize the Google OAuth client properly
 const SignIn = () => {
   const router = useRouter();
+  const { user, signInWithGoogle, loading } = useAuthContext();
 
-  // Mock function to simulate Google authentication
-  const handleGoogleSignIn = () => {
-    // In a real app, this would use the actual Google OAuth flow
-    console.log('Signing in with Google...');
-    // Simulate successful authentication and redirect to payment
-    setTimeout(() => {
+  useEffect(() => {
+    // If user is already logged in, redirect to payment page
+    if (user && !loading) {
       router.push('/payment');
-    }, 1000);
+    }
+  }, [user, loading, router]);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const user = await signInWithGoogle();
+      if (user) {
+        console.log('Successfully signed in:', user.displayName);
+        router.push('/payment');
+      }
+    } catch (error) {
+      console.error('Error signing in:', error);
+    }
   };
 
   return (
@@ -67,4 +77,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn; 
+export default SignIn;
