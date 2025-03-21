@@ -16,14 +16,14 @@ PhotoHero ofrece:
 - React 18
 - TypeScript
 - Tailwind CSS
-- Autenticación con Google OAuth
+- Autenticación con Firebase (Google Sign-In)
 - Integración de PayPal para pagos
 - API de fal.ai para entrenamiento de modelos
 
 ## Funcionalidades Principales
 
 1. **Landing Page**: Presentación del servicio con información sobre precios y funcionalidades
-2. **Autenticación**: Flujo de registro con Google OAuth
+2. **Autenticación**: Flujo de registro con Firebase Authentication
 3. **Pagos**: Integración con PayPal para el pago único de $9 USD
 4. **Subida de Fotos**: Interfaz para subir 10-15 fotos para entrenar el modelo
 5. **Entrenamiento de IA**: Integración con la API de fal.ai utilizando modelos "flux"
@@ -37,18 +37,28 @@ npm install
 ```
 3. Crear un archivo `.env.local` con las siguientes variables:
 ```
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=tu_id_de_cliente_de_google
-GOOGLE_CLIENT_SECRET=tu_secreto_de_cliente_de_google
+# Firebase Configuration
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key_de_firebase
+
+# PayPal Configuration
 NEXT_PUBLIC_PAYPAL_CLIENT_ID=tu_id_de_cliente_de_paypal
-FALAI_API_KEY=tu_clave_api_de_falai
-NEXTAUTH_SECRET=una_cadena_aleatoria_para_seguridad
-NEXTAUTH_URL=http://localhost:3000
+
+# FAL.AI Configuration (para el entrenamiento del modelo)
+NEXT_PUBLIC_FALAI_API_KEY=tu_clave_api_de_falai
 ```
 4. Ejecutar en modo desarrollo:
 ```bash
 npm run dev
 ```
 5. Abrir [http://localhost:3000](http://localhost:3000) en el navegador.
+
+## Seguridad
+
+Este proyecto utiliza variables de entorno para manejar claves API y otras credenciales sensibles. Nunca expongas estas claves directamente en el código fuente o las incluyas en el control de versiones.
+
+Para despliegue:
+1. En Netlify, configura las variables de entorno en "Site settings" > "Environment variables"
+2. Asegúrate de que todos los servicios externos (Firebase, PayPal) tengan los dominios correctos autorizados
 
 ## Implementación en Producción
 
@@ -79,4 +89,4 @@ O despliega directamente en plataformas como Vercel o Netlify.
 
 ## Créditos y Licencia
 
-© 2025 PhotoHero. All rights reserved. 
+ 2025 PhotoHero. All rights reserved. 
