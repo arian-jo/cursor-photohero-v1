@@ -142,16 +142,44 @@ const Hero = () => {
         {/* Muestras de imágenes */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 max-w-4xl mx-auto">
           <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-1.jpg" alt="AI Generated Photo 1" fill className="object-cover" />
+            <Image 
+              src="/images/sample-1.jpg" 
+              alt="AI Generated Photo 1" 
+              fill 
+              className="object-cover" 
+              priority
+              unoptimized
+            />
           </div>
           <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-2.jpg" alt="AI Generated Photo 2" fill className="object-cover" />
+            <Image 
+              src="/images/sample-2.jpg" 
+              alt="AI Generated Photo 2" 
+              fill 
+              className="object-cover"
+              priority
+              unoptimized
+            />
           </div>
           <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-3.jpg" alt="AI Generated Photo 3" fill className="object-cover" />
+            <Image 
+              src="/images/sample-3.jpg" 
+              alt="AI Generated Photo 3" 
+              fill 
+              className="object-cover"
+              priority
+              unoptimized
+            />
           </div>
           <div className="relative rounded-xl overflow-hidden aspect-square shadow-lg transform transition-transform hover:scale-105">
-            <Image src="/images/sample-4.jpg" alt="AI Generated Photo 4" fill className="object-cover" />
+            <Image 
+              src="/images/sample-4.jpg" 
+              alt="AI Generated Photo 4" 
+              fill 
+              className="object-cover"
+              priority
+              unoptimized
+            />
           </div>
         </div>
       </div>
