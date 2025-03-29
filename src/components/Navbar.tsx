@@ -58,18 +58,33 @@ const Navbar = () => {
               <Link
                 href="/#pricing"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const section = document.getElementById('pricing');
+                  if (section) section.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 Pricing
               </Link>
               <Link
                 href="/#how-it-works"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const section = document.getElementById('how-it-works');
+                  if (section) section.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 How It Works
               </Link>
               <Link
                 href="/#faq"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 hover-scale"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const section = document.getElementById('faq');
+                  if (section) section.scrollIntoView({ behavior: 'smooth' });
+                }}
               >
                 FAQ
               </Link>
@@ -201,21 +216,36 @@ const Navbar = () => {
           <Link
             href="/#pricing"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              const section = document.getElementById('pricing');
+              if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             Pricing
           </Link>
           <Link
             href="/#how-it-works"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              const section = document.getElementById('how-it-works');
+              if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             How It Works
           </Link>
           <Link
             href="/#faq"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 hover-scale"
-            onClick={() => setIsMenuOpen(false)}
+            onClick={(e) => {
+              e.preventDefault();
+              setIsMenuOpen(false);
+              const section = document.getElementById('faq');
+              if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             FAQ
           </Link>
