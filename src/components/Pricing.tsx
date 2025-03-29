@@ -195,7 +195,7 @@ const Pricing = () => {
 
                 <div className="mt-4 mb-6">
                   <Link
-                    href="/subscription"
+                    href="/payment"
                     className={`w-full ${plan.isPopular ? 'hero-button-primary' : 'hero-button-secondary'} block text-center hover-scale text-sm py-2`}
                   >
                     Subscribe →
